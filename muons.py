@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 from ROOT import TChain, TLorentzVector, TH1F, gPad
 
+class Particle:
+    def __init__(self, p, q):
+        self.p = p
+        self.q = q
+
 def get_four_momenta(data, ilepton):
     """
     Get the four-momentum of a given lepton from TTree data and
@@ -18,7 +23,8 @@ def get_four_momenta(data, ilepton):
 def get_leptons_from_event(data):
     leptons = []
     for ilepton in range(data.lep_n):
-        leptons.append(get_four_momenta(data, ilepton)) 
+        particle = Particle(get_four_momenta(data, ilepton), data.lep_charge[ilepton])
+        leptons.append(particle) 
     return leptons
 
 def get_lepton_pairs(leptons):
@@ -31,12 +37,28 @@ def get_lepton_pairs(leptons):
     n_leptons = len(leptons)
     for p_i in range(n_leptons-1):
         for p_j in range(p_i+1, n_leptons):
-            pair = leptons[p_i] + leptons[p_j]
+            pair = [leptons[p_i], leptons[p_j]]
             pairs.append(pair)
     return pairs
 
-class Particle:
-    pass
+def get_opposite_charge_pairs(pairs):
+    """
+    Take a set of pairs of Particle objects and return a 
+    list of those whose individual particles have opposite 
+    sign.
+    """
+    opposite_pairs = []
+    for pair in pairs:
+        if pair[0].q != pair[1].q: 
+            opposite_pairs.append(pair)
+    return opposite_pairs
+
+def get_mass_of_pair(pair):
+    """
+    Get invariant mass of pair (list size 2) of Particle objects.
+    """
+    p_pair = pair[0].p+pair[1].p
+    return p_pair.M() 
 
 data = TChain("mini")
 data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
@@ -51,14 +73,16 @@ for i_event in range(num_events_to_process):
     data.GetEntry(i_event)
     n_leptons = data.lep_n
     if n_leptons >= 2: # looking for pairs of leptons
-        p_leptons = get_leptons_from_event(data)
-        print("Found {} leptons:".format(len(p_leptons)))
-        for p in sorted(p_leptons, key=lambda x: x.Pt()): # print based on decreasing mass
-            print("  -> Pt {}", p.Pt())
-        pairs = get_lepton_pairs(p_leptons)
-        for pair in pairs:
-            print("   -> Invariant mass of pair = {}".format(pair.M()))
-            h_mpair.Fill(pair.M()/1E3) # convert from MeV to GeV
+        leptons = get_leptons_from_event(data)
+        print("Found {} leptons:".format(len(leptons)))
+        for p in sorted(leptons, key=lambda x: x.p.Pt()): # print based on decreasing mass
+            print("  -> Pt {}", p.p.Pt())
+        pairs = get_lepton_pairs(leptons)
+        opposite_sign_pairs = get_opposite_charge_pairs(pairs)
+        for pair in opposite_sign_pairs: 
+            m_pair = get_mass_of_pair(pair) 
+            print("   -> Invariant mass of pair = {}".format(m_pair))
+            h_mpair.Fill(m_pair/1E3) # convert from MeV to GeV
 
 h_mpair.Draw()
 raw_input("Exit?") 
