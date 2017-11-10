@@ -1,10 +1,5 @@
 #!/usr/bin/env python
 from ROOT import TChain, TLorentzVector, TH1F, gPad
-data = TChain("mini")
-data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
-
-num_events = data.GetEntries()
-print("Number of events = "+str(num_events))
 
 def get_four_momenta(data, ilepton):
     """
@@ -19,6 +14,12 @@ def get_four_momenta(data, ilepton):
                     data.lep_phi[ilepton], \
                     data.lep_E[ilepton]) 
     return pt
+
+data = TChain("mini")
+data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
+
+num_events = data.GetEntries()
+print("Number of events = "+str(num_events))
 
 h_mpair = TH1F("h_mpair", "#mu pair invariant mass", 100, 50000.0, 100000.0)
 
