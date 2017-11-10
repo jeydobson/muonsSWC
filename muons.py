@@ -23,13 +23,13 @@ print("Number of events = "+str(num_events))
 
 h_mpair = TH1F("h_mpair", "#mu pair invariant mass; GeV/c^{2}; Events/bin", 200, 50.0, 150.0)
 
-num_events_to_process = 1000 # for testing
+num_events_to_process = 10000 # for testing
 for i_event in range(num_events_to_process):
     data.GetEntry(i_event)
     n_leptons = data.lep_n
     if n_leptons >= 2: # looking for pairs of leptons
+        # TODO: deal with > 2 muon cases
         print("Number of leptons = "+str(n_leptons))
-        assert n_leptons==2
         pt1 = data.lep_pt[0]
         pt2 = data.lep_pt[1]
         print("Lepton Pts are: {} and {}".format(pt1, pt2))
@@ -42,5 +42,4 @@ for i_event in range(num_events_to_process):
         h_mpair.Fill(mpair/1E3)
 
 h_mpair.Draw()
-gPad.Update()
 raw_input("Exit?") 
