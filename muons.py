@@ -24,7 +24,7 @@ num_events_to_process = 1000 # for testing
 for i_event in range(num_events_to_process):
     data.GetEntry(i_event)
     n_leptons = data.lep_n
-    if n_leptons >= 2:
+    if n_leptons >= 2: # looking for pairs of leptons
         print("Number of leptons = "+str(n_leptons))
         assert n_leptons==2
         pt1 = data.lep_pt[0]
@@ -32,4 +32,8 @@ for i_event in range(num_events_to_process):
         print("Lepton Pts are: {} and {}".format(pt1, pt2))
         p1 = get_four_momenta(data, 0)
         p2 = get_four_momenta(data, 1)
-        print("Pts from TLorentzVector are {} and {}".format(p1.Pt(), p2.Pt())) 
+        print("Pts from TLorentzVector are {} and {}".format(p1.Pt(), p2.Pt()))
+        ppair = p1 + p2
+        mpair = ppair.M()
+        print("Invariant mass of the two muons = {}".format(mpair))
+ 
