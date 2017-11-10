@@ -15,6 +15,12 @@ def get_four_momenta(data, ilepton):
                     data.lep_E[ilepton]) 
     return pt
 
+def get_leptons_from_event(data):
+    leptons = []
+    for ilepton in range(data.lep_n):
+        leptons.append(get_four_momenta(data, ilepton)) 
+    return leptons
+
 def get_lepton_pairs(leptons):
     """
     Return all possible combinations of pairs except those
@@ -29,6 +35,9 @@ def get_lepton_pairs(leptons):
             pairs.append(pair)
     return pairs
 
+class Particle:
+    pass
+
 data = TChain("mini")
 data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
 
@@ -42,7 +51,7 @@ for i_event in range(num_events_to_process):
     data.GetEntry(i_event)
     n_leptons = data.lep_n
     if n_leptons >= 2: # looking for pairs of leptons
-        p_leptons = [get_four_momenta(data, i) for i in range(n_leptons)] 
+        p_leptons = get_leptons_from_event(data)
         print("Found {} leptons:".format(len(p_leptons)))
         for p in sorted(p_leptons, key=lambda x: x.Pt()): # print based on decreasing mass
             print("  -> Pt {}", p.Pt())
