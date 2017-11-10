@@ -30,7 +30,7 @@ for i_event in range(num_events_to_process):
     if n_leptons >= 2: # looking for pairs of leptons
         p_leptons = [get_four_momenta(data, i) for i in range(n_leptons)] 
         print("Found {} leptons:".format(len(p_leptons)))
-        for p in p_leptons:
+        for p in sorted(p_leptons, key=lambda x: x.Pt()): # print based on decreasing mass
             print("  -> Pt {}", p.Pt())
         # TODO: deal with > 2 muon cases
         ppair = p_leptons[0] + p_leptons[1]
