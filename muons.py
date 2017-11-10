@@ -21,7 +21,7 @@ data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
 num_events = data.GetEntries()
 print("Number of events = "+str(num_events))
 
-h_mpair = TH1F("h_mpair", "#mu pair invariant mass", 100, 50000.0, 100000.0)
+h_mpair = TH1F("h_mpair", "#mu pair invariant mass; GeV/c^{2}; Events/bin", 100, 50.0, 100.0)
 
 num_events_to_process = 1000 # for testing
 for i_event in range(num_events_to_process):
@@ -39,7 +39,7 @@ for i_event in range(num_events_to_process):
         ppair = p1 + p2
         mpair = ppair.M()
         print("Invariant mass of the two muons = {}".format(mpair))
-        h_mpair.Fill(mpair)
+        h_mpair.Fill(mpair/1E3)
 
 h_mpair.Draw()
 gPad.Update()
