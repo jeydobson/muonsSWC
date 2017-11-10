@@ -15,6 +15,19 @@ def get_four_momenta(data, ilepton):
                     data.lep_E[ilepton]) 
     return pt
 
+def get_lepton_pairs(leptons):
+    """
+    Return all possible combinations of pairs except those
+    where the pair is made of the same lepton
+    """
+    pairs = []
+    n_leptons = len(leptons)
+    for p_i in range(n_leptons-1):
+        for p_j in range(p_i+1, n_leptons):
+            pair = leptons[p_i] + leptons[p_j]
+            pairs.append(pair)
+    return pairs
+
 data = TChain("mini")
 data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
 
@@ -23,7 +36,7 @@ print("Number of events = "+str(num_events))
 
 h_mpair = TH1F("h_mpair", "#mu pair invariant mass; GeV/c^{2}; Events/bin", 200, 50.0, 150.0)
 
-num_events_to_process = 1000 # for testing
+num_events_to_process = 100000 # for testing
 for i_event in range(num_events_to_process):
     data.GetEntry(i_event)
     n_leptons = data.lep_n
@@ -32,11 +45,10 @@ for i_event in range(num_events_to_process):
         print("Found {} leptons:".format(len(p_leptons)))
         for p in sorted(p_leptons, key=lambda x: x.Pt()): # print based on decreasing mass
             print("  -> Pt {}", p.Pt())
-        # TODO: deal with > 2 muon cases
-        ppair = p_leptons[0] + p_leptons[1]
-        mpair = ppair.M()
-        print("Invariant mass of the first two muons = {}".format(mpair))
-        h_mpair.Fill(mpair/1E3)
+        pairs = get_lepton_pairs(p_leptons)
+        for pair in pairs:
+            print("   -> Invariant mass of pair = {}".format(pair.M()))
+            h_mpair.Fill(pair.M()/1E3)
 
 h_mpair.Draw()
 raw_input("Exit?") 
