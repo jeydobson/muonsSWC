@@ -18,7 +18,8 @@ def get_four_momenta(data, ilepton):
 def get_lepton_pairs(leptons):
     """
     Return all possible combinations of pairs except those
-    where the pair is made of the same lepton
+    where the pair is made of the same lepton. Returns the 
+    combined four-momentum as a list of TLorentzVectors.
     """
     pairs = []
     n_leptons = len(leptons)
