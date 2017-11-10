@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from ROOT import TChain, TLorentzVector
+from ROOT import TChain, TLorentzVector, TH1F, gPad
 data = TChain("mini")
 data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
 
@@ -20,6 +20,8 @@ def get_four_momenta(data, ilepton):
                     data.lep_E[ilepton]) 
     return pt
 
+h_mpair = TH1F("h_mpair", "#mu pair invariant mass", 100, 50000.0, 100000.0)
+
 num_events_to_process = 1000 # for testing
 for i_event in range(num_events_to_process):
     data.GetEntry(i_event)
@@ -36,4 +38,8 @@ for i_event in range(num_events_to_process):
         ppair = p1 + p2
         mpair = ppair.M()
         print("Invariant mass of the two muons = {}".format(mpair))
- 
+        h_mpair.Fill(mpair)
+
+h_mpair.Draw()
+gPad.Update()
+raw_input("Exit?") 
