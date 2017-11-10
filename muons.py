@@ -21,7 +21,7 @@ data.Add("/home/jdobson/SoftwareCarpentry/DataMuons.root")
 num_events = data.GetEntries()
 print("Number of events = "+str(num_events))
 
-h_mpair = TH1F("h_mpair", "#mu pair invariant mass; GeV/c^{2}; Events/bin", 100, 50.0, 100.0)
+h_mpair = TH1F("h_mpair", "#mu pair invariant mass; GeV/c^{2}; Events/bin", 200, 50.0, 150.0)
 
 num_events_to_process = 1000 # for testing
 for i_event in range(num_events_to_process):
