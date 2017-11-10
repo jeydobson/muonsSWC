@@ -49,7 +49,7 @@ for i_event in range(num_events_to_process):
         pairs = get_lepton_pairs(p_leptons)
         for pair in pairs:
             print("   -> Invariant mass of pair = {}".format(pair.M()))
-            h_mpair.Fill(pair.M()/1E3)
+            h_mpair.Fill(pair.M()/1E3) # convert from MeV to GeV
 
 h_mpair.Draw()
 raw_input("Exit?") 
